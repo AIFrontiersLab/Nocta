@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  @apply bg-canvas text-ink font-sans antialiased;
+}
+
+.card {
+  @apply rounded-2xl border border-line bg-white shadow-soft;
+}
+
+.kicker {
+  @apply text-[11px] font-semibold uppercase tracking-[0.18em] text-cyan;
+}
+
+.score-pill {
+  @apply inline-flex items-center rounded-full bg-blue-50 px-3 py-1 text-sm font-semibold text-electric;
+}
