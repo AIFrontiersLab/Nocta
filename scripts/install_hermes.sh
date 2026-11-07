@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ROOT="/Users/aiserver/Workspace_New/VectraFutureLab"
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 HERMES_HOME_DIR="${HERMES_HOME:-$HOME/.hermes}"
 SCRIPTS_DIR="$HERMES_HOME_DIR/scripts"
-WRAPPER="$SCRIPTS_DIR/futurelab-nightly.sh"
-JOB_NAME="Vectra FutureLab"
+WRAPPER="$SCRIPTS_DIR/nocta-nightly.sh"
+JOB_NAME="Nocta"
 
 if [[ ! -x "$ROOT/backend/.venv/bin/python" ]]; then
   echo "Virtualenv missing. Create it first:"
@@ -14,13 +14,13 @@ if [[ ! -x "$ROOT/backend/.venv/bin/python" ]]; then
 fi
 
 mkdir -p "$SCRIPTS_DIR"
-chmod +x "$ROOT/scripts/futurelab-nightly.sh"
+chmod +x "$ROOT/scripts/nocta-nightly.sh"
 
 cat > "$WRAPPER" <<EOF
 #!/usr/bin/env bash
 set -euo pipefail
 cd "$ROOT"
-exec "$ROOT/scripts/futurelab-nightly.sh" "\$@"
+exec "$ROOT/scripts/nocta-nightly.sh" "\$@"
 EOF
 chmod +x "$WRAPPER"
 
@@ -37,7 +37,7 @@ if hermes cron list 2>/dev/null | grep -q "$JOB_NAME"; then
 else
   hermes cron create "30 22 * * *" \
     --no-agent \
-    --script "futurelab-nightly.sh" \
+    --script "nocta-nightly.sh" \
     --deliver local \
     --name "$JOB_NAME" \
     --workdir "$ROOT"

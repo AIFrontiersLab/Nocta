@@ -28,7 +28,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
               <FlaskConical size={18} />
             </div>
             <div>
-              <div className="font-display text-lg font-semibold">Vectra FutureLab</div>
+              <div className="font-display text-lg font-semibold">Nocta</div>
               <div className="text-xs text-mute">Invent tomorrow while you sleep.</div>
             </div>
           </Link>

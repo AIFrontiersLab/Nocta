@@ -109,7 +109,7 @@ def test_error_result_always_has_empty_deliveries():
 def test_morning_notifier_does_not_execute_hermes_send():
     settings = Settings(
         hermes_enabled=True,
-        futurelab_send_whatsapp=True,
+        nocta_send_whatsapp=True,
         hermes_whatsapp_group="120363012345678901@g.us",
     )
     notifier = MorningNotifier(settings)
@@ -125,7 +125,7 @@ def test_morning_notifier_does_not_execute_hermes_send():
 def test_morning_notifier_disabled_returns_no_deliveries():
     settings = Settings(
         hermes_enabled=False,
-        futurelab_send_whatsapp=True,
+        nocta_send_whatsapp=True,
         hermes_whatsapp_group="120363012345678901@g.us",
     )
     notifier = MorningNotifier(settings)
@@ -144,7 +144,7 @@ def test_whatsapp_payload_generation_unchanged():
     winner.one_liner = "Escrow for autonomous agents"
     winner.score = 82.5
     payload = whatsapp_payload(run, winner, [])
-    assert "VECTRA FUTURELAB" in payload
+    assert "NOCTA" in payload
     assert "Agent Escrow" in payload
     assert "82/100" in payload
 

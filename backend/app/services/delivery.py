@@ -24,7 +24,7 @@ def whatsapp_delivery_enabled(settings: Settings | None = None) -> bool:
     s = settings or get_settings()
     return bool(
         s.hermes_enabled
-        and s.futurelab_send_whatsapp
+        and s.nocta_send_whatsapp
         and whatsapp_target_from_settings(s)
     )
 

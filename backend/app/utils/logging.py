@@ -8,10 +8,10 @@ from typing import Any
 from app.config.settings import get_settings
 
 
-class FutureLabLogger:
-    PREFIX = "FUTURELAB"
+class NoctaLogger:
+    PREFIX = "NOCTA"
 
-    def __init__(self, name: str = "futurelab") -> None:
+    def __init__(self, name: str = "nocta") -> None:
         self._logger = logging.getLogger(name)
 
     def stage(self, message: str, **fields: Any) -> None:
@@ -38,7 +38,7 @@ class FutureLabLogger:
         self._logger.exception(message, *args)
 
 
-def setup_logging(level: str | None = None) -> FutureLabLogger:
+def setup_logging(level: str | None = None) -> NoctaLogger:
     settings = get_settings()
     log_level = (level or settings.log_level or "INFO").upper()
     root = logging.getLogger()
@@ -47,8 +47,8 @@ def setup_logging(level: str | None = None) -> FutureLabLogger:
         handler.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(message)s", "%H:%M:%S"))
         root.addHandler(handler)
     root.setLevel(getattr(logging, log_level, logging.INFO))
-    return FutureLabLogger("futurelab")
+    return NoctaLogger("nocta")
 
 
-def get_logger(name: str = "futurelab") -> FutureLabLogger:
-    return FutureLabLogger(name)
+def get_logger(name: str = "nocta") -> NoctaLogger:
+    return NoctaLogger(name)

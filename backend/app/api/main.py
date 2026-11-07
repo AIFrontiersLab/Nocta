@@ -14,7 +14,7 @@ def create_app() -> FastAPI:
     setup_logging(settings.log_level)
     init_db()
 
-    app = FastAPI(title="Vectra FutureLab", version="0.2.0")
+    app = FastAPI(title="Nocta", version="0.2.0")
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.cors_origin_list,
@@ -36,6 +36,6 @@ def create_app() -> FastAPI:
 
     @app.get("/api/health")
     def health():
-        return {"status": "ok", "product": "Vectra FutureLab", "version": "0.2.0"}
+        return {"status": "ok", "product": "Nocta", "version": "0.2.0"}
 
     return app

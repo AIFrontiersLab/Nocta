@@ -45,7 +45,7 @@ def build_prototype(
             local_path="",
             launch_command="",
             architecture=idea.architecture,
-            readme="Human approval required before FutureLab writes prototype files.",
+            readme="Human approval required before Nocta writes prototype files.",
             tests_passed=False,
         )
 
@@ -68,7 +68,7 @@ def build_prototype(
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>{title} — FutureLab Prototype</title>
+  <title>{title} — Nocta Prototype</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
@@ -92,7 +92,7 @@ def build_prototype(
 </head>
 <body>
   <header>
-    <div class="kicker">Vectra FutureLab prototype · AI + Agentic AI</div>
+    <div class="kicker">Nocta prototype · AI + Agentic AI</div>
     <h1>{title}</h1>
     <p class="one">{one}</p>
     <div class="badge">Isolated demo · AI / Agentic scope only</div>
@@ -154,7 +154,7 @@ def build_prototype(
             proto_dir,
             html_url=github_url,
             clone_url=clone_url,
-            commit_message=f"feat: invent {idea.name} (FutureLab AI/Agentic prototype)",
+            commit_message=f"feat: invent {idea.name} (Nocta AI/Agentic prototype)",
             settings=settings,
         )
         if pushed.ok:

@@ -41,7 +41,7 @@ def morning_report_markdown(
         proto_block = "\n\n".join(lines)
     score = f"{winner.score:.0f} / 100" if winner else "—"
     rec = run.recommendation or "WATCH"
-    return f"""# VECTRA FUTURELAB — MORNING REPORT
+    return f"""# NOCTA — MORNING REPORT
 
 ## Last Night's Invention
 
@@ -77,7 +77,7 @@ def morning_report_markdown(
 
 See the dashboard for the full boardroom. Strongest arguments are stored with the idea.
 
-## FutureLab Score
+## Nocta Score
 
 {score}
 
@@ -116,7 +116,7 @@ def whatsapp_payload(
     else:
         proto = "Not built"
     score = f"{winner.score:.0f}/100" if winner else "—"
-    return f"""🚀 VECTRA FUTURELAB
+    return f"""🚀 NOCTA
 
 Last night I explored:
 {run.theme or run.hypothesis}
@@ -130,7 +130,7 @@ Winner:
 Concept:
 {one}
 
-FutureLab Score:
+Nocta Score:
 {score}
 
 Prototypes:

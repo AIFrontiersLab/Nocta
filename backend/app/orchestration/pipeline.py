@@ -509,7 +509,7 @@ def run_experiment(
         run.finished_at = utc_now()
         run.status = "completed"
         db.commit()
-        emit(db, run, "complete", "FutureLab run complete")
+        emit(db, run, "complete", "Nocta run complete")
         db.refresh(run)
         return ExperimentResult(run=run, deliveries=deliveries)
     except Exception as exc:
@@ -534,7 +534,7 @@ def _fixture_agent_signals() -> list[dict]:
             "id": new_id("sig"),
             "title": "Lab fixture: agent-to-agent checkout experiments",
             "category": "market",
-            "source": "FutureLab Lab Fixture",
+            "source": "Nocta Lab Fixture",
             "source_url": "",
             "published_at": "",
             "summary": "Illustrative cluster: multiple teams are prototyping machine-payable APIs. Not a real article.",
@@ -550,7 +550,7 @@ def _fixture_agent_signals() -> list[dict]:
             "id": new_id("sig"),
             "title": "Lab fixture: agent identity / authorization discussions",
             "category": "technology",
-            "source": "FutureLab Lab Fixture",
+            "source": "Nocta Lab Fixture",
             "source_url": "",
             "published_at": "",
             "summary": "Illustrative cluster: identity for non-human actors is being designed in several stacks at once.",
@@ -566,7 +566,7 @@ def _fixture_agent_signals() -> list[dict]:
             "id": new_id("sig"),
             "title": "Lab fixture: computer-use agents on legacy GUIs",
             "category": "developer",
-            "source": "FutureLab Lab Fixture",
+            "source": "Nocta Lab Fixture",
             "source_url": "",
             "published_at": "",
             "summary": "Illustrative cluster: operators for software without APIs.",

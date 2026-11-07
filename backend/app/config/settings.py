@@ -6,7 +6,8 @@ from pathlib import Path
 from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-DEFAULT_BASE_DIR = Path("/Users/aiserver/Workspace_New/VectraFutureLab")
+# Resolve repo root from this file: backend/app/config/settings.py → ../../..
+DEFAULT_BASE_DIR = Path(__file__).resolve().parents[3]
 
 
 class Settings(BaseSettings):
@@ -17,25 +18,25 @@ class Settings(BaseSettings):
         case_sensitive=False,
     )
 
-    futurelab_env: str = "development"
+    nocta_env: str = "development"
     base_dir: Path = DEFAULT_BASE_DIR
     timezone: str = "America/Los_Angeles"
     log_level: str = "INFO"
-    futurelab_enabled: bool = True
+    nocta_enabled: bool = True
 
-    futurelab_api_host: str = "127.0.0.1"
-    futurelab_api_port: int = 8787
-    futurelab_cors_origins: str = "http://127.0.0.1:3000,http://localhost:3000"
+    nocta_api_host: str = "127.0.0.1"
+    nocta_api_port: int = 8787
+    nocta_cors_origins: str = "http://127.0.0.1:3000,http://localhost:3000"
 
-    futurelab_database_url: str = "sqlite:///data/futurelab.db"
-    futurelab_output_dir: Path = Path("outputs/futurelab")
+    nocta_database_url: str = "sqlite:///data/nocta.db"
+    nocta_output_dir: Path = Path("outputs/nocta")
 
     # SharedRoute (OpenAI-compatible). Physical backends are never contacted here.
     # Routing is done by X-Route-Project + X-Route-Task headers; model is always "router".
     openai_base_url: str = "http://10.0.0.27:8088/v1"
     openai_api_key: str = "unused"
     ai_model: str = "router"
-    ai_project: str = "VectraFutureLab"
+    ai_project: str = "Nocta"
     llm_temperature: float = 0.45
     llm_timeout_seconds: float = 180.0
     llm_max_retries: int = 2
@@ -60,7 +61,7 @@ class Settings(BaseSettings):
     duplicate_similarity_threshold: float = 0.78
     resurrection_min_delta: float = 8
 
-    # Domain: FutureLab invents AI + Agentic AI only
+    # Domain: Nocta invents AI + Agentic AI only
     require_ai_agentic_scope: bool = True
     default_theme: str = "Autonomous AI Agents"
 
@@ -76,7 +77,7 @@ class Settings(BaseSettings):
     hermes_enabled: bool = False
     hermes_command: str = "hermes"
     hermes_whatsapp_group: str = ""
-    futurelab_send_whatsapp: bool = False
+    nocta_send_whatsapp: bool = False
 
     weight_novelty: float = 0.12
     weight_problem_severity: float = 0.10
@@ -91,18 +92,18 @@ class Settings(BaseSettings):
     weight_prototypeability: float = 0.07
     weight_signal_confidence: float = 0.05
 
-    @field_validator("base_dir", "futurelab_output_dir", mode="before")
+    @field_validator("base_dir", "nocta_output_dir", mode="before")
     @classmethod
     def _expand_path(cls, value: object) -> Path:
         return Path(str(value)).expanduser()
 
     @property
     def cors_origin_list(self) -> list[str]:
-        return [item.strip() for item in self.futurelab_cors_origins.split(",") if item.strip()]
+        return [item.strip() for item in self.nocta_cors_origins.split(",") if item.strip()]
 
     @property
     def resolved_output_dir(self) -> Path:
-        path = self.futurelab_output_dir
+        path = self.nocta_output_dir
         return path if path.is_absolute() else self.base_dir / path
 
     @property
@@ -119,7 +120,7 @@ class Settings(BaseSettings):
 
     @property
     def database_url(self) -> str:
-        url = self.futurelab_database_url
+        url = self.nocta_database_url
         if url.startswith("sqlite:///"):
             rest = url.removeprefix("sqlite:///")
             path = Path(rest)

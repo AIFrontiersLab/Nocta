@@ -1,6 +1,6 @@
 # Architecture
 
-Vectra FutureLab is a local-first overnight invention lab.
+Nocta is a local-first overnight invention lab.
 
 ## Layers
 

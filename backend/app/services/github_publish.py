@@ -42,7 +42,7 @@ def _headers(token: str) -> dict[str, str]:
         "Accept": "application/vnd.github+json",
         "Authorization": f"Bearer {token}",
         "X-GitHub-Api-Version": "2022-11-28",
-        "User-Agent": "VectraFutureLab",
+        "User-Agent": "Nocta",
     }
 
 
@@ -70,7 +70,7 @@ def create_github_repo(
 
     payload = {
         "name": repo_name,
-        "description": (description or "Vectra FutureLab AI/Agentic prototype")[:350],
+        "description": (description or "Nocta AI/Agentic prototype")[:350],
         "private": bool(s.github_private),
         "auto_init": False,
         "has_issues": True,
@@ -152,8 +152,8 @@ def push_prototype_directory(
     try:
         if not (proto_dir / ".git").exists():
             _run(["git", "init", "-b", "main"], cwd=proto_dir)
-        _run(["git", "config", "user.email", "futurelab@local"], cwd=proto_dir)
-        _run(["git", "config", "user.name", "Vectra FutureLab"], cwd=proto_dir)
+        _run(["git", "config", "user.email", "nocta@local"], cwd=proto_dir)
+        _run(["git", "config", "user.name", "Nocta"], cwd=proto_dir)
 
         meta = {
             "html_url": html_url,
@@ -161,7 +161,7 @@ def push_prototype_directory(
             "repo": f"{owner}/{repo}",
             "private": bool(s.github_private),
         }
-        (proto_dir / ".futurelab-github.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
+        (proto_dir / ".nocta-github.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
 
         _run(["git", "add", "-A"], cwd=proto_dir)
         status = _run(["git", "status", "--porcelain"], cwd=proto_dir)
@@ -207,6 +207,6 @@ def publish_prototype_to_github(
         proto_dir,
         html_url=created.html_url,
         clone_url=created.clone_url,
-        commit_message=f"feat: invent {name} (FutureLab overnight prototype)",
+        commit_message=f"feat: invent {name} (Nocta overnight prototype)",
         settings=settings,
     )

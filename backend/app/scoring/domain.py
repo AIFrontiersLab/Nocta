@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 
-# Hard scope: FutureLab only invents inside AI + Agentic AI.
+# Hard scope: Nocta only invents inside AI + Agentic AI.
 AI_AGENTIC_KEYWORDS = (
     "ai",
     "a.i.",
@@ -104,7 +104,7 @@ def is_ai_agentic_scope(
         return True, ""
 
     if not has_ai and not has_agentic:
-        return False, "Out of scope: FutureLab only invents AI and Agentic AI products"
+        return False, "Out of scope: Nocta only invents AI and Agentic AI products"
     if has_ai and not has_agentic:
         return False, "Out of scope: AI wrapper without an agentic/systems thesis"
     return False, "Out of scope: must be AI + Agentic AI"

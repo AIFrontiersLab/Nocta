@@ -13,7 +13,7 @@ from app.utils.logging import setup_logging
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Vectra FutureLab — Invent tomorrow while you sleep.")
+    parser = argparse.ArgumentParser(description="Nocta — Invent tomorrow while you sleep.")
     sub = parser.add_subparsers(dest="command")
 
     run_parser = sub.add_parser("run", help="Run an experiment")
@@ -49,7 +49,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "serve":
         import uvicorn
 
-        uvicorn.run("app.api.main:create_app", factory=True, host=settings.futurelab_api_host, port=settings.futurelab_api_port)
+        uvicorn.run("app.api.main:create_app", factory=True, host=settings.nocta_api_host, port=settings.nocta_api_port)
         return 0
 
     if args.command == "run" or args.command is None:

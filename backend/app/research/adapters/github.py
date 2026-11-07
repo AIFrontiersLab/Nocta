@@ -25,7 +25,7 @@ class GitHubAdapter(SignalAdapter):
 
     def _headers(self) -> dict[str, str]:
         settings = get_settings()
-        headers = {"Accept": "application/vnd.github+json", "User-Agent": "VectraFutureLab"}
+        headers = {"Accept": "application/vnd.github+json", "User-Agent": "Nocta"}
         if settings.github_token:
             headers["Authorization"] = f"Bearer {settings.github_token}"
         return headers

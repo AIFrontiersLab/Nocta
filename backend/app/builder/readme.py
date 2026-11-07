@@ -52,7 +52,7 @@ def render_fancy_readme(idea: Idea, *, local_path: str = "", github_url: str = "
         "ai",
         "agentic-ai",
         "autonomous-agents",
-        "vectra-futurelab",
+        "nocta",
         "prototype",
     ]
     conv = idea.technology_convergence or []
@@ -63,7 +63,7 @@ def render_fancy_readme(idea: Idea, *, local_path: str = "", github_url: str = "
                 tags.append(slug[:32])
 
     badge_ai = "![AI](https://img.shields.io/badge/domain-AI%20%2B%20Agentic-0ea5e9?style=for-the-badge)"
-    badge_lab = "![FutureLab](https://img.shields.io/badge/built%20by-Vectra%20FutureLab-111827?style=for-the-badge)"
+    badge_lab = "![Nocta](https://img.shields.io/badge/built%20by-Nocta-111827?style=for-the-badge)"
     badge_status = "![Status](https://img.shields.io/badge/status-isolated%20prototype-22c55e?style=for-the-badge)"
 
     risks = idea.risks or []

@@ -25,7 +25,7 @@ export default function MemoryPage() {
         ))}
       </div>
       <section className="mt-10">
-        <h2 className="font-display text-2xl font-semibold">FutureLab has learned</h2>
+        <h2 className="font-display text-2xl font-semibold">Nocta has learned</h2>
         <div className="mt-4 space-y-3">
           {(data.learnings || []).map((item: any) => (
             <div key={item.id} className="card p-5">

@@ -23,7 +23,7 @@ def home(db: Session = Depends(get_db)):
     return {
         "hero": {
             "greeting": "GOOD MORNING.",
-            "subtitle": "FutureLab explored the frontier while you slept.",
+            "subtitle": "Nocta explored the frontier while you slept.",
             "winner": idea_to_dict(winner) if winner else None,
             "run": run_to_dict(latest_run) if latest_run else None,
         },

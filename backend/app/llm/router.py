@@ -16,7 +16,7 @@ from app.utils.logging import get_logger
 log = get_logger("llm")
 T = TypeVar("T", bound=BaseModel)
 
-# Default task when callers omit one. FutureLab core work is HEAVY-bound via SharedRoute.
+# Default task when callers omit one. Nocta core work is HEAVY-bound via SharedRoute.
 DEFAULT_TASK = "complex_reasoning"
 
 # Known SharedRoute tasks (documentation aid). SharedRoute maps tasks to FAST / MEDIUM / HEAVY.

@@ -1,10 +1,10 @@
-# Vectra FutureLab
+# Nocta
 
 **Invent Tomorrow While You Sleep.**
 
-Vectra FutureLab is a local-first autonomous innovation laboratory. Every night it can explore weak signals, detect convergences, generate and reject many ideas, debate them with role-specific agents, score opportunities transparently, optionally build an isolated prototype, and present a morning experience:
+Nocta is a local-first autonomous innovation laboratory. Every night it can explore weak signals, detect convergences, generate and reject many ideas, debate them with role-specific agents, score opportunities transparently, optionally build an isolated prototype, and present a morning experience:
 
-> **While you were sleeping, FutureLab invented this.**
+> **While you were sleeping, Nocta invented this.**
 
 ## What it is
 
@@ -15,7 +15,7 @@ Vectra FutureLab is a local-first autonomous innovation laboratory. Every night 
 ## Quick start
 
 ```bash
-cd /Users/aiserver/Workspace_New/VectraFutureLab
+cd /path/to/Nocta   # this repo
 cp .env.example .env
 
 # Backend
@@ -40,20 +40,20 @@ API health: **http://127.0.0.1:8787/api/health**
 ## Hermes nightly job
 
 ```bash
-chmod +x scripts/futurelab-nightly.sh
+chmod +x scripts/nocta-nightly.sh
 ./scripts/install_hermes.sh
 ```
 
-Suggested schedule: `30 22 * * *` (10:30 PM). The installer creates a Hermes wrapper at `~/.hermes/scripts/futurelab-nightly.sh` without modifying unrelated cron jobs.
+Suggested schedule: `30 22 * * *` (10:30 PM). The installer creates a Hermes wrapper at `~/.hermes/scripts/nocta-nightly.sh` without modifying unrelated cron jobs.
 
 The nightly script runs with `--build` and creates up to **`DAILY_PROTOTYPE_COUNT`** prototypes (default **2**). With `GITHUB_AUTO_PUBLISH=true`, that means **2 new GitHub repos per day** (winner + next finalist).
 
 Manual run:
 
 ```bash
-./scripts/futurelab-nightly.sh
+./scripts/nocta-nightly.sh
 # or
-futurelab run --mode auto
+nocta run --mode auto
 ```
 
 ## CLI
@@ -70,7 +70,7 @@ PYTHONPATH=. python -m app.cli serve
 ## Architecture
 
 ```text
-futurelab/
+nocta/
 ├── backend/            FastAPI + SQLAlchemy + orchestrator
 │   ├── analytics/      Run metrics, cost tracker, trends
 │   ├── evaluation/     Filter/eval harness + baselines
@@ -79,7 +79,7 @@ futurelab/
 ├── frontend/           Next.js dashboard + analytics UI
 ├── docs/               Architecture / API / modes
 ├── scripts/            Hermes wrappers
-├── outputs/futurelab/  Per-run artifacts
+├── outputs/nocta/  Per-run artifacts
 ├── data/               SQLite database
 └── tests/
 ```
@@ -109,14 +109,14 @@ See `.env.example` for:
 - cost limits (`MAX_MODEL_CALLS`, `MAX_RUNTIME_MINUTES`, `PROTOTYPE_THRESHOLD`)
 - domain scope (`REQUIRE_AI_AGENTIC_SCOPE`, `DEFAULT_THEME`)
 - GitHub publish (`GITHUB_AUTO_PUBLISH`, `GITHUB_OWNER`, `GITHUB_TOKEN`, `GITHUB_PRIVATE`)
-- Hermes/WhatsApp (`HERMES_ENABLED`, `HERMES_WHATSAPP_GROUP`, `FUTURELAB_SEND_WHATSAPP`)
+- Hermes/WhatsApp (`HERMES_ENABLED`, `HERMES_WHATSAPP_GROUP`, `NOCTA_SEND_WHATSAPP`)
 
 ### LLM routing
 
 All completions go through SharedRoute. The app never talks to Ollama hosts or individual oMLX machines.
 
 ```text
-VectraFutureLab
+Nocta
        ↓
 OPENAI_BASE_URL + model=router
 X-Route-Project / X-Route-Task
@@ -126,7 +126,7 @@ http://10.0.0.27:8088/v1
 SharedRoute → FAST / MEDIUM / HEAVY → oMLX backends
 ```
 
-Typical FutureLab tasks (most core work → **HEAVY** via task name):
+Typical Nocta tasks (most core work → **HEAVY** via task name):
 
 | Workload | `X-Route-Task` |
 |---|---|
@@ -142,7 +142,7 @@ Typical FutureLab tasks (most core work → **HEAVY** via task name):
 
 ## Safety
 
-FutureLab may research, reason, write local artifacts, and build isolated prototypes.
+Nocta may research, reason, write local artifacts, and build isolated prototypes.
 
 By default it will **not** email, purchase, deploy publicly, or modify unrelated repositories.
 
@@ -168,4 +168,4 @@ pytest ../tests -q
 
 - **Empty dashboard**: run `seed` or start a run via Experiments screen
 - **LLM unavailable**: checks SharedRoute at `OPENAI_BASE_URL` (`http://10.0.0.27:8088/v1`); otherwise continues with catalog + heuristic scoring
-- **WhatsApp not sent**: set `HERMES_ENABLED=true`, `FUTURELAB_SEND_WHATSAPP=true`, and `HERMES_WHATSAPP_GROUP`
+- **WhatsApp not sent**: set `HERMES_ENABLED=true`, `NOCTA_SEND_WHATSAPP=true`, and `HERMES_WHATSAPP_GROUP`

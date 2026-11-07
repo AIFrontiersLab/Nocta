@@ -69,7 +69,7 @@ def test_fancy_readme_has_sections():
         mode="missing-primitive",
         status="winner",
     )
-    md = render_fancy_readme(idea, local_path="/tmp/proto", github_url="https://github.com/acme/futurelab-agent-escrow")
+    md = render_fancy_readme(idea, local_path="/tmp/proto", github_url="https://github.com/acme/nocta-agent-escrow")
     assert "# Agent Escrow" in md
     assert "Why this exists" in md
     assert "Architecture" in md
@@ -78,5 +78,5 @@ def test_fancy_readme_has_sections():
     assert "## Quick start" not in md
     assert 'python3 -m http.server 4173 --directory .' in md
     assert "AI + Agentic" in md or "AI and Agentic" in md
-    assert "https://github.com/acme/futurelab-agent-escrow" in md
+    assert "https://github.com/acme/nocta-agent-escrow" in md
     assert "![AI]" in md

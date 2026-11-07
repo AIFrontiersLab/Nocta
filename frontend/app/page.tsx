@@ -26,7 +26,7 @@ export default function HomePage() {
       <section className="mb-10">
         <p className="kicker">Good morning</p>
         <h1 className="mt-2 font-display text-5xl font-semibold tracking-tight md:text-6xl">
-          FutureLab explored the frontier while you slept.
+          Nocta explored the frontier while you slept.
         </h1>
       </section>
 
@@ -48,7 +48,7 @@ export default function HomePage() {
       <section className="mt-10">
         <div className="mb-4 flex items-center gap-2">
           <Sparkles className="text-electric" size={18} />
-          <h3 className="font-display text-2xl font-semibold">Why FutureLab chose this</h3>
+          <h3 className="font-display text-2xl font-semibold">Why Nocta chose this</h3>
         </div>
         <div className="card flex flex-col gap-4 p-6 md:flex-row md:items-center md:justify-between">
           {chain.map((step: any, idx: number) => (

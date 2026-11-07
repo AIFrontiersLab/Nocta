@@ -26,7 +26,7 @@ export function HeroInvention({
         </h2>
         <p className="mt-3 max-w-3xl text-lg text-mute">{winner?.one_liner}</p>
         <div className="mt-6 flex flex-wrap items-center gap-3">
-          <span className="score-pill">FutureLab Score {formatScore(winner?.score)} / 100</span>
+          <span className="score-pill">Nocta Score {formatScore(winner?.score)} / 100</span>
           <Badge>
             Prototype: {prototypeStatus === "built" ? "BUILT" : prototypeStatus || "—"}
           </Badge>
