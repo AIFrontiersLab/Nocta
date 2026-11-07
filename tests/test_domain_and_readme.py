@@ -73,6 +73,10 @@ def test_fancy_readme_has_sections():
     assert "# Agent Escrow" in md
     assert "Why this exists" in md
     assert "Architecture" in md
+    assert "```mermaid" in md
+    assert "## Start" in md
+    assert "## Quick start" not in md
+    assert 'python3 -m http.server 4173 --directory .' in md
     assert "AI + Agentic" in md or "AI and Agentic" in md
     assert "https://github.com/acme/futurelab-agent-escrow" in md
     assert "![AI]" in md

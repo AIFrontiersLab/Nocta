@@ -1,6 +1,49 @@
 from __future__ import annotations
 
+import re
+
 from app.database.models import Idea
+
+
+def _mermaid_escape(text: str) -> str:
+    """Keep Mermaid node labels readable and safe."""
+    cleaned = re.sub(r"[\"\[\]]", "", (text or "").strip())
+    cleaned = re.sub(r"\s+", " ", cleaned)
+    return cleaned[:48] or "Step"
+
+
+def _architecture_mermaid(architecture: str, product_name: str) -> str:
+    """Build a flowchart from arrow-separated architecture text, with a sensible default."""
+    raw = (architecture or "").strip()
+    parts = [p.strip(" .") for p in re.split(r"\s*(?:→|->|—>|=>|/|;|,)\s*", raw) if p.strip(" .")]
+    # Prefer short stage names; long prose becomes a single summary node
+    if len(parts) < 2 or any(len(p) > 40 for p in parts):
+        parts = [
+            "Intent / capture",
+            "Policy & clustering",
+            "Proposal UI",
+            "Operator / audit",
+        ]
+
+    nodes: list[str] = []
+    edges: list[str] = []
+    for idx, part in enumerate(parts[:6]):
+        key = chr(ord("A") + idx)
+        nodes.append(f'  {key}["{_mermaid_escape(part)}"]')
+        if idx > 0:
+            prev = chr(ord("A") + idx - 1)
+            edges.append(f"  {prev} --> {key}")
+
+    label = _mermaid_escape(product_name)
+    return (
+        "```mermaid\n"
+        "flowchart LR\n"
+        f'  subgraph Product["{label}"]\n'
+        + "\n".join(nodes)
+        + "\n  end\n"
+        + "\n".join(edges)
+        + "\n```"
+    )
 
 
 def render_fancy_readme(idea: Idea, *, local_path: str = "", github_url: str = "") -> str:
@@ -36,10 +79,14 @@ def render_fancy_readme(idea: Idea, *, local_path: str = "", github_url: str = "
     assumption_lines = "\n".join(f"- {a}" for a in assumptions) or "- Agent workflows will keep expanding into real systems"
     conv_lines = ", ".join(str(c) for c in conv) if conv else "Agent runtimes, tool calling, trusted execution"
 
+    arch_text = idea.architecture or "Intent API → policy/runtime → tools → audit log"
+    arch_mermaid = _architecture_mermaid(arch_text, idea.name or "Prototype")
+
     repo_line = f"**Repository:** [{github_url}]({github_url})" if github_url else "**Repository:** local prototype (not published)"
+    # README lives inside the prototype dir — use relative path so GitHub clones work.
     launch = (
-        f'```bash\npython3 -m http.server 4173 --directory "{local_path}"\n```'
-        if local_path
+        "```bash\npython3 -m http.server 4173 --directory .\n```"
+        if local_path or github_url
         else "Open `index.html` in a browser."
     )
 
@@ -93,12 +140,14 @@ def render_fancy_readme(idea: Idea, *, local_path: str = "", github_url: str = "
 ## Architecture
 
 ```text
-{idea.architecture or "Intent API → policy/runtime → tools → audit log"}
+{arch_text}
 ```
+
+{arch_mermaid}
 
 ---
 
-## Quick start
+## Start
 
 {launch}
 

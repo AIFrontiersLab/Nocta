@@ -43,7 +43,7 @@ def setup_logging(level: str | None = None) -> FutureLabLogger:
     log_level = (level or settings.log_level or "INFO").upper()
     root = logging.getLogger()
     if not root.handlers:
-        handler = logging.StreamHandler(sys.stdout)
+        handler = logging.StreamHandler(sys.stderr)
         handler.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(message)s", "%H:%M:%S"))
         root.addHandler(handler)
     root.setLevel(getattr(logging, log_level, logging.INFO))

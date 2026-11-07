@@ -21,44 +21,40 @@ if [[ ! -x "$PYTHON" ]]; then
   exit 1
 fi
 
-ARGS=()
-for arg in "$@"; do
-  ARGS+=("$arg")
-done
-
 echo "[FutureLab] Starting nightly experiment"
 echo "[FutureLab] time=$STAMP"
 
-PRIMARY_OLLAMA="${OLLAMA_HOST:-http://10.0.0.25:11434}"
-FALLBACK_OLLAMA="${OLLAMA_FALLBACK_HOST:-http://localhost:11434}"
-FALLBACK_MODEL="${OLLAMA_FALLBACK_MODEL:-qwen3.5:latest}"
-if curl -sf "${PRIMARY_OLLAMA}/api/tags" >/dev/null 2>&1; then
-  export OLLAMA_HOST="$PRIMARY_OLLAMA"
-  echo "[FutureLab] Ollama primary ok: $PRIMARY_OLLAMA"
-elif curl -sf "${FALLBACK_OLLAMA}/api/tags" >/dev/null 2>&1; then
-  export OLLAMA_HOST="$FALLBACK_OLLAMA"
-  export LLM_BASE_URL="${FALLBACK_OLLAMA}/v1"
-  export OLLAMA_FALLBACK_MODEL="$FALLBACK_MODEL"
-  export OLLAMA_MODEL="$FALLBACK_MODEL"
-  export LLM_FILTER_MODEL="$FALLBACK_MODEL"
-  export LLM_REASONING_MODEL="$FALLBACK_MODEL"
-  export LLM_CODING_MODEL="$FALLBACK_MODEL"
-  export LLM_DEFAULT_MODEL="$FALLBACK_MODEL"
-  echo "[FutureLab] Ollama primary failed ($PRIMARY_OLLAMA); falling back to $FALLBACK_OLLAMA with $FALLBACK_MODEL (all tiers)"
-elif [[ -z "${OPENAI_API_KEY:-}" ]]; then
-  echo "warning: Ollama unreachable (primary + local fallback) and OPENAI_API_KEY not set; run may use catalog scoring"
+# SharedRoute only — no direct Ollama / oMLX backends.
+ROUTER_BASE="${OPENAI_BASE_URL:-http://10.0.0.27:8088/v1}"
+ROUTER_ORIGIN="${ROUTER_BASE%/v1}"
+export OPENAI_BASE_URL="$ROUTER_BASE"
+export OPENAI_API_KEY="${OPENAI_API_KEY:-unused}"
+export AI_MODEL="${AI_MODEL:-router}"
+export AI_PROJECT="${AI_PROJECT:-VectraFutureLab}"
+
+if curl -sf "${ROUTER_ORIGIN}/health" >/dev/null 2>&1; then
+  echo "[FutureLab] SharedRoute ok: $ROUTER_BASE (project=$AI_PROJECT model=$AI_MODEL)"
+else
+  echo "warning: SharedRoute unreachable ($ROUTER_ORIGIN/health); run may use catalog scoring"
 fi
 
 set +e
-OUTPUT="$("$PYTHON" -m app.cli run --mode auto --build "${ARGS[@]}" 2>&1)"
+# Use "$@" (not an empty array under set -u) so Hermes/cron with no extra args works.
+LOG_FILE="$(mktemp "${TMPDIR:-/tmp}/futurelab-nightly.XXXXXX")"
+RESULT="$("$PYTHON" -m app.cli run --mode auto --build --json "$@" 2>"$LOG_FILE")"
 STATUS=$?
 set -e
 
-echo "$OUTPUT"
+cat "$LOG_FILE" >&2
+rm -f "$LOG_FILE"
+
+if [[ -n "$RESULT" ]]; then
+  echo "$RESULT"
+fi
 
 if [[ $STATUS -ne 0 ]]; then
   echo "[FutureLab] Failed with exit code $STATUS at $STAMP" >&2
   exit "$STATUS"
 fi
 
-echo "[FutureLab] Complete at $STAMP (builds up to DAILY_PROTOTYPE_COUNT GitHub repos when publish is enabled)"
+echo "[FutureLab] Complete at $STAMP (builds up to DAILY_PROTOTYPE_COUNT GitHub repos when publish is enabled)" >&2

@@ -126,7 +126,8 @@ def run_agent(role: str, idea: IdeaDraft, llm: ModelRouter | None) -> AgentTake:
     try:
         system = load_prompt(f"agents/{role}")
         user = _idea_blob(idea) + "\nReturn JSON with keys role, stance, quote, full_text, confidence, score_hint."
-        take = llm.complete_model(system, user, AgentTake, tier="reasoning")
+        # Idea evaluation (feasibility / differentiation / business potential) → HEAVY
+        take = llm.complete_model(system, user, AgentTake, task="complex_reasoning")
         take.role = role
         return take
     except Exception as exc:
@@ -178,7 +179,7 @@ def judge_finalists(
             "You may pick a polarizing idea if evidence is stronger.\n"
             f"{payload}\nReturn JSON JudgeDecision."
         )
-        decision = llm.complete_model(system, user, JudgeDecision, tier="reasoning")
+        decision = llm.complete_model(system, user, JudgeDecision, task="deep_analysis")
         names = {i.name for i in ideas}
         if decision.winner_name not in names:
             decision.winner_name = default_winner.name
@@ -206,7 +207,7 @@ def score_dimensions_for_idea(
         try:
             system = load_prompt("agents/scorer")
             user = _idea_blob(idea) + "\nReturn JSON {dimensions: {name: {score, reason, evidence, confidence}}}"
-            bundle = llm.complete_model(system, user, DimensionBundle, tier="reasoning")
+            bundle = llm.complete_model(system, user, DimensionBundle, task="complex_reasoning")
             return bundle
         except Exception as exc:
             log.warning(f"scorer fell back: {exc}")

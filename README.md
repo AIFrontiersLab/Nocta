@@ -71,37 +71,74 @@ PYTHONPATH=. python -m app.cli serve
 
 ```text
 futurelab/
-├── backend/          FastAPI + SQLAlchemy + orchestrator
-├── frontend/           Next.js dashboard
+├── backend/            FastAPI + SQLAlchemy + orchestrator
+│   ├── analytics/      Run metrics, cost tracker, trends
+│   ├── evaluation/     Filter/eval harness + baselines
+│   ├── research/       Signal adapters (HN, GitHub, papers)
+│   └── ...
+├── frontend/           Next.js dashboard + analytics UI
+├── docs/               Architecture / API / modes
 ├── scripts/            Hermes wrappers
 ├── outputs/futurelab/  Per-run artifacts
 ├── data/               SQLite database
 └── tests/
 ```
 
+See also `docs/ARCHITECTURE.md`, `docs/API.md`, and `CONTRIBUTING.md`.
+
 ### Core pipeline
 
 ```text
 signals → convergences → mode selection → idea generation
 → filters → scoring → agent debate → judge → prototype → morning report
+→ analytics / evaluation
 ```
 
 ### Reused infrastructure
 
 - **Hermes** cron + script wrapper pattern (same as FutureTech / IdeaDestruction)
 - **WhatsApp** via existing `hermes send` (`MorningNotifier`)
-- **Ollama/OpenAI** model router pattern from sibling labs
+- **SharedRoute** at `http://10.0.0.27:8088/v1` (`model=router`, task via `X-Route-Task`)
 - **Signal adapters** inspired by InnovationScanner (HN, GitHub, papers)
 
 ## Environment
 
 See `.env.example` for:
 
-- model routing (`LLM_*` vars — no hardcoded model names in code)
+- SharedRoute (`OPENAI_BASE_URL`, `OPENAI_API_KEY`, `AI_MODEL`, `AI_PROJECT`)
 - cost limits (`MAX_MODEL_CALLS`, `MAX_RUNTIME_MINUTES`, `PROTOTYPE_THRESHOLD`)
 - domain scope (`REQUIRE_AI_AGENTIC_SCOPE`, `DEFAULT_THEME`)
 - GitHub publish (`GITHUB_AUTO_PUBLISH`, `GITHUB_OWNER`, `GITHUB_TOKEN`, `GITHUB_PRIVATE`)
 - Hermes/WhatsApp (`HERMES_ENABLED`, `HERMES_WHATSAPP_GROUP`, `FUTURELAB_SEND_WHATSAPP`)
+
+### LLM routing
+
+All completions go through SharedRoute. The app never talks to Ollama hosts or individual oMLX machines.
+
+```text
+VectraFutureLab
+       ↓
+OPENAI_BASE_URL + model=router
+X-Route-Project / X-Route-Task
+       ↓
+http://10.0.0.27:8088/v1
+       ↓
+SharedRoute → FAST / MEDIUM / HEAVY → oMLX backends
+```
+
+Typical FutureLab tasks (most core work → **HEAVY** via task name):
+
+| Workload | `X-Route-Task` |
+|---|---|
+| Idea feasibility / agent debate / scoring | `complex_reasoning` |
+| Final judge decision | `deep_analysis` |
+| Market / technology research | `deep_research` |
+| Architecture decisions | `architecture` |
+| Code scaffolding | `code_generation` |
+| Code review / debug | `code_review` / `debugging` |
+| Multi-step project planning | `agent_planning` |
+| README / announcements | `content_generation` |
+| Classification / short metadata | `classification` / `simple_summary` |
 
 ## Safety
 
@@ -111,7 +148,7 @@ By default it will **not** email, purchase, deploy publicly, or modify unrelated
 
 **Domain scope:** when `REQUIRE_AI_AGENTIC_SCOPE=true` (default), every candidate must be **AI + Agentic AI**. Non-agentic ideas are rejected.
 
-**GitHub publish (opt-in):** set `GITHUB_AUTO_PUBLISH=true`, `GITHUB_TOKEN`, and `GITHUB_OWNER`. Then each built prototype creates a **new** repo, commits a fancy README + demo, and pushes — only inside that isolated prototype directory. Repos default to **private** (`GITHUB_PRIVATE=true`). Set `DAILY_PROTOTYPE_COUNT=2` (default) so a nightly `--build` run publishes **two** repos.
+**GitHub publish (opt-in):** set `GITHUB_AUTO_PUBLISH=true`, `GITHUB_TOKEN`, and `GITHUB_OWNER`. Then each built prototype creates a **new** repo, commits a fancy README + demo, and pushes — only inside that isolated prototype directory. Repos default to **public** (`GITHUB_PRIVATE=false`). Set `GITHUB_PRIVATE=true` only if you want private repos. Set `DAILY_PROTOTYPE_COUNT=2` (default) so a nightly `--build` run publishes **two** repos.
 
 Prototype builds still require `--build` when `REQUIRE_HUMAN_APPROVAL_FOR_BUILD=true`.
 
@@ -130,5 +167,5 @@ pytest ../tests -q
 ## Troubleshooting
 
 - **Empty dashboard**: run `seed` or start a run via Experiments screen
-- **LLM unavailable**: tries `OLLAMA_HOST` (`http://10.0.0.25:11434`), then falls back to `OLLAMA_FALLBACK_HOST` (`http://localhost:11434`) with **`OLLAMA_FALLBACK_MODEL=qwen3.5:latest` for all tiers**; otherwise continues with catalog + heuristic scoring
+- **LLM unavailable**: checks SharedRoute at `OPENAI_BASE_URL` (`http://10.0.0.27:8088/v1`); otherwise continues with catalog + heuristic scoring
 - **WhatsApp not sent**: set `HERMES_ENABLED=true`, `FUTURELAB_SEND_WHATSAPP=true`, and `HERMES_WHATSAPP_GROUP`

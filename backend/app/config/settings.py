@@ -3,7 +3,7 @@ from __future__ import annotations
 from functools import lru_cache
 from pathlib import Path
 
-from pydantic import Field, field_validator
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 DEFAULT_BASE_DIR = Path("/Users/aiserver/Workspace_New/VectraFutureLab")
@@ -30,25 +30,15 @@ class Settings(BaseSettings):
     futurelab_database_url: str = "sqlite:///data/futurelab.db"
     futurelab_output_dir: Path = Path("outputs/futurelab")
 
-    llm_provider: str = "ollama"
-    llm_base_url: str = "http://10.0.0.25:11434/v1"
+    # SharedRoute (OpenAI-compatible). Physical backends are never contacted here.
+    # Routing is done by X-Route-Project + X-Route-Task headers; model is always "router".
+    openai_base_url: str = "http://10.0.0.27:8088/v1"
+    openai_api_key: str = "unused"
+    ai_model: str = "router"
+    ai_project: str = "VectraFutureLab"
     llm_temperature: float = 0.45
-    llm_timeout_seconds: int = 180
+    llm_timeout_seconds: float = 180.0
     llm_max_retries: int = 2
-    ollama_model: str = "qwen3.6:27b"
-    llm_filter_model: str = "qwen3.6:27b"
-    llm_reasoning_model: str = "qwen3.6:27b"
-    llm_coding_model: str = "qwen3.6:27b"
-    llm_default_model: str = "qwen3.6:27b"
-
-    openai_api_key: str = ""
-    openai_base_url: str = "https://api.openai.com/v1"
-    anthropic_api_key: str = ""
-    gemini_api_key: str = ""
-    ollama_host: str = "http://10.0.0.25:11434"
-    ollama_fallback_host: str = "http://localhost:11434"
-    # Used for every model tier when primary Ollama is unreachable
-    ollama_fallback_model: str = "qwen3.5:latest"
 
     max_runtime_minutes: int = 90
     max_model_calls: int = 80
@@ -78,8 +68,8 @@ class Settings(BaseSettings):
     github_owner: str = ""
     github_owner_is_org: bool = False
     github_auto_publish: bool = False
-    github_private: bool = True
-    github_repo_prefix: str = "futurelab"
+    github_private: bool = False
+    github_repo_prefix: str = ""
     tavily_api_key: str = ""
     semantic_scholar_api_key: str = ""
 
@@ -162,16 +152,10 @@ class Settings(BaseSettings):
             "signal_confidence": self.weight_signal_confidence,
         }
 
-    def model_for_tier(self, tier: str) -> str:
-        mapping = {
-            "filter": self.llm_filter_model,
-            "cheap": self.llm_filter_model,
-            "reasoning": self.llm_reasoning_model,
-            "strong": self.llm_reasoning_model,
-            "coding": self.llm_coding_model,
-            "default": self.llm_default_model,
-        }
-        return mapping.get(tier) or self.llm_default_model or self.ollama_model
+    @property
+    def uses_shared_route(self) -> bool:
+        """True when completions go through SharedRoute (model=router)."""
+        return bool(self.openai_base_url) and self.ai_model == "router"
 
 
 @lru_cache(maxsize=1)

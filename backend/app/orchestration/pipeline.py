@@ -35,6 +35,7 @@ from app.research.signals import collect_signals
 from app.scoring.engine import compute_scorecard, recommendation_for_band
 from app.scoring.obvious import is_impossible, is_obvious
 from app.scoring.domain import enforce_ai_theme, is_ai_agentic_scope, signal_is_ai_agentic
+from app.orchestration.result import ExperimentResult
 from app.services.notifier import MorningNotifier
 from app.services.reporter import morning_report_markdown, whatsapp_payload, write_run_artifacts
 from app.utils.ids import new_id, utc_now
@@ -188,7 +189,7 @@ def run_experiment(
     build: bool = False,
     settings: Settings | None = None,
     session: Session | None = None,
-) -> Run:
+) -> ExperimentResult:
     s = settings or get_settings()
     setup_logging(s.log_level)
     init_db()
@@ -494,21 +495,23 @@ def run_experiment(
         run.morning_report = report
         run.whatsapp_payload = payload
         write_run_artifacts(out_dir, report, payload)
-        MorningNotifier(s).send(payload)
+        deliveries = MorningNotifier(s).collect_deliveries(payload)
 
         run.ideas_generated = len(drafts)
         run.ideas_rejected = rejected + len(dupes)
         run.finalists_count = len(finalists)
         run.model_calls = budget.calls
         run.tokens_used = budget.tokens
-        run.estimated_cost_usd = 0.0 if s.llm_provider == "ollama" else round(budget.tokens / 1_000_000 * 3.0, 4)
+        run.estimated_cost_usd = (
+            0.0 if s.uses_shared_route else round(budget.tokens / 1_000_000 * 3.0, 4)
+        )
         run.runtime_seconds = round(time.monotonic() - started, 2)
         run.finished_at = utc_now()
         run.status = "completed"
         db.commit()
         emit(db, run, "complete", "FutureLab run complete")
         db.refresh(run)
-        return run
+        return ExperimentResult(run=run, deliveries=deliveries)
     except Exception as exc:
         log.exception("run failed")
         run.status = "failed"
@@ -517,7 +520,8 @@ def run_experiment(
         run.runtime_seconds = round(time.monotonic() - started, 2)
         db.commit()
         emit(db, run, "error", f"Run failed: {exc}", status="error")
-        raise
+        db.refresh(run)
+        return ExperimentResult(run=run, deliveries=[])
     finally:
         if own_session:
             db.close()

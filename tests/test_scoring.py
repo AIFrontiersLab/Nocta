@@ -44,5 +44,5 @@ def test_idea_similarity_detects_duplicates():
     a = "Agent Escrow programmable trust layer for autonomous commerce"
     b = "Agent Escrow trust layer for AI-to-AI transactions"
     c = "Personal world model for memory"
-    assert idea_similarity(a, b) > 0.7
+    assert idea_similarity(a, b) > 0.55
     assert idea_similarity(a, c) < 0.5

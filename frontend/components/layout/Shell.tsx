@@ -13,6 +13,7 @@ const links = [
   ["Resurrections", "/resurrections"],
   ["Memory", "/memory"],
   ["Runs", "/runs"],
+  ["Analytics", "/analytics"],
   ["Settings", "/settings"],
 ];
 

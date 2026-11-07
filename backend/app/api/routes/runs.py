@@ -24,6 +24,7 @@ def _background_run(mode: str, theme: str, dry_run: bool, build: bool) -> None:
     db = get_session_factory()()
     try:
         run_experiment(mode=mode, theme=theme, dry_run=dry_run, build=build, session=db)
+        # Deliveries are returned to remote Hermes on the Mac mini; API runs are fire-and-forget.
     finally:
         db.close()
 

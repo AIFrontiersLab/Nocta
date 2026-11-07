@@ -22,6 +22,8 @@ export const api = {
   runs: () => request<any>("/runs"),
   run: (id: string) => request<any>(`/runs/${id}`),
   modes: () => request<any>("/modes"),
+  analytics: () => request<any>("/analytics/overview"),
+  evaluation: () => request<any>("/analytics/evaluation"),
   startRun: (body: { mode: string; theme?: string; dry_run?: boolean; build?: boolean }) =>
     request<any>("/runs/start", { method: "POST", body: JSON.stringify(body) }),
   feedback: (ideaId: string, body: { reaction: string; action?: string }) =>

@@ -1,15 +1,17 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
+import { IdeaCard } from "@/components/ideas/IdeaCard";
 import { Shell } from "@/components/layout/Shell";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { api } from "@/lib/api";
+import type { Idea } from "@/lib/types";
 
 const filters = ["all", "exceptional", "prototype_candidates", "watch", "archived", "rejected", "resurrected"];
 
 export default function IdeasPage() {
   const [status, setStatus] = useState("all");
-  const [items, setItems] = useState<any[]>([]);
+  const [items, setItems] = useState<Idea[]>([]);
 
   useEffect(() => {
     api.ideas(status).then((d) => setItems(d.items || []));
@@ -27,18 +29,10 @@ export default function IdeasPage() {
       </div>
       <div className="mt-6 grid gap-4 md:grid-cols-2">
         {items.map((idea) => (
-          <Link key={idea.id} href={`/ideas/${idea.id}`} className="card p-5 transition hover:-translate-y-0.5">
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <h2 className="text-xl font-semibold">{idea.name}</h2>
-                <p className="mt-1 text-sm text-mute">{idea.one_liner}</p>
-              </div>
-              <span className="score-pill">{idea.score?.toFixed?.(0)}</span>
-            </div>
-            <div className="mt-4 text-xs uppercase tracking-wide text-mute">Mode: {idea.mode} · {idea.status}</div>
-          </Link>
+          <IdeaCard key={idea.id} idea={idea} />
         ))}
       </div>
+      {!items.length && <div className="mt-6"><EmptyState title="No ideas for this filter" detail="Run an experiment or switch filters." /></div>}
     </Shell>
   );
 }

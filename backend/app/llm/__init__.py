@@ -1,5 +1,12 @@
 from app.llm.prompt_loader import load_prompt, render_prompt
-from app.llm.router import BudgetExceeded, ModelRouter, RunBudget, extract_json
+from app.llm.router import (
+    DEFAULT_TASK,
+    ROUTER_TASKS,
+    BudgetExceeded,
+    ModelRouter,
+    RunBudget,
+    extract_json,
+)
 from app.llm.schemas import (
     SCORE_DIMENSIONS,
     AgentTake,
@@ -15,6 +22,8 @@ from app.llm.schemas import (
 )
 
 __all__ = [
+    "DEFAULT_TASK",
+    "ROUTER_TASKS",
     "AgentTake",
     "ArchitectureBrief",
     "AutoDiscoverChoice",
